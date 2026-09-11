@@ -1,0 +1,10 @@
+KLEINANZEIGEN-AF V2 — Configuration Supabase
+
+Project URL configured:
+https://kmtjihrobvbejsckdwmr.supabase.co
+
+Next:
+1. Copy .env.example to .env.local.
+2. Add your Supabase Publishable key to the appropriate public environment variable.
+3. NEVER put a Supabase Secret/service_role key in browser code.
+4. Keep KKiaPay private/secret keys server-side only.
