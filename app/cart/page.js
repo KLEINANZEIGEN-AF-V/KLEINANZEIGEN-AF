@@ -41,7 +41,7 @@ export default function CartPage() {
 
     window.openKkiapayWidget({
       amount: total,
-      api_key:api_key: process.env.NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY,
+      api_key:process.env.NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY,
       position: "center",
       theme: "#0095ff",
       sandbox: true,
