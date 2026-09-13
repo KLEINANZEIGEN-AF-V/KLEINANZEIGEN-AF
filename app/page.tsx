@@ -45,21 +45,26 @@ const countries = [
 export default function Home() {
   const [screen, setScreen] = useState<Screen>('home');
 
+  // Compte
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Transfert
   const [sendCountry, setSendCountry] = useState('🇫🇷 France');
   const [receiveCountry, setReceiveCountry] = useState('🇧🇯 Bénin');
   const [amount, setAmount] = useState('');
 
+  // Bénéficiaire
   const [beneficiaryName, setBeneficiaryName] = useState('');
   const [beneficiaryPhone, setBeneficiaryPhone] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState('Mobile Money');
 
   const amountNumber = Number(amount.replace(',', '.')) || 0;
 
+  // Valeurs de démonstration pour l'interface.
+  // À remplacer par un vrai service de change/frais avant tout transfert réel.
   const rate = 655;
   const fee = amountNumber > 0 ? 1.99 : 0;
   const received = Math.max(0, amountNumber - fee) * rate;
@@ -83,19 +88,21 @@ export default function Home() {
     setDeliveryMethod('Mobile Money');
   };
 
+  // Écran d'inscription
   if (screen === 'signup') {
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl">
+        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
           <div className="px-6 pt-7 pb-5 flex items-center gap-3">
             <button
               onClick={() => setScreen('home')}
+              aria-label="Retour"
               className="h-11 w-11 rounded-full border border-slate-200 flex items-center justify-center text-[#082f49]"
             >
               <ArrowLeft size={21} />
             </button>
             <div>
-              <div className="text-2xl font-extrabold text-[#082f49]">
+              <div className="text-2xl font-extrabold tracking-tight text-[#082f49]">
                 Créer un compte
               </div>
               <div className="text-xs text-slate-400 mt-1">
@@ -168,29 +175,35 @@ export default function Home() {
 
             <button
               onClick={() => setScreen('dashboard')}
-              className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white"
+              className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white shadow-lg shadow-cyan-900/15"
             >
               Continuer <ArrowRight className="inline ml-2" size={21} />
             </button>
+            <p className="mt-4 text-center text-xs leading-5 text-slate-400">
+              En continuant, vous acceptez les conditions d’utilisation et la
+              politique de confidentialité de Sendora.
+            </p>
           </div>
         </section>
       </main>
     );
   }
 
+  // Choix du transfert
   if (screen === 'transfer') {
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl">
+        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
           <div className="px-6 pt-7 pb-5 flex items-center gap-3">
             <button
               onClick={() => setScreen('dashboard')}
+              aria-label="Retour"
               className="h-11 w-11 rounded-full border border-slate-200 flex items-center justify-center text-[#082f49]"
             >
               <ArrowLeft size={21} />
             </button>
             <div>
-              <div className="text-2xl font-extrabold text-[#082f49]">
+              <div className="text-2xl font-extrabold tracking-tight text-[#082f49]">
                 Envoyer de l'argent
               </div>
               <div className="text-xs text-slate-400 mt-1">
@@ -201,8 +214,8 @@ export default function Home() {
 
           <div className="px-6 pb-8">
             <div className="rounded-2xl bg-[#eaf8fa] p-4 text-sm text-[#0b5575] mb-6">
-              Choisissez le pays d'envoi et le pays où le bénéficiaire recevra
-              les fonds.
+              Choisissez le pays depuis lequel vous envoyez de l'argent et le
+              pays où le bénéficiaire recevra les fonds.
             </div>
 
             <label className="block text-sm font-semibold text-[#082f49]">
@@ -264,14 +277,12 @@ export default function Home() {
                   {amountNumber > 0 ? `${formatEuro(fee)} EUR` : '—'}
                 </span>
               </div>
-
               <div className="flex justify-between">
                 <span className="text-slate-500">Taux de change</span>
                 <span className="font-semibold text-[#082f49]">
                   {amountNumber > 0 ? `1 EUR = ${rate} FCFA` : '—'}
                 </span>
               </div>
-
               <div className="border-t border-slate-200 pt-2 flex justify-between">
                 <span className="font-semibold text-[#082f49]">
                   Le bénéficiaire reçoit
@@ -287,59 +298,60 @@ export default function Home() {
             <button
               disabled={amountNumber <= 0}
               onClick={() => setScreen('beneficiary')}
-              className={`mt-6 w-full rounded-full py-4 text-lg font-bold ${
+              className={`mt-6 w-full rounded-full py-4 text-lg font-bold shadow-lg ${
                 amountNumber > 0
-                  ? 'bg-[#0b7598] text-white'
-                  : 'bg-slate-200 text-slate-400'
+                  ? 'bg-[#0b7598] text-white shadow-cyan-900/15'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
               Continuer <ArrowRight className="inline ml-2" size={21} />
             </button>
+
+            <p className="mt-3 text-center text-xs text-slate-400">
+              Les frais et le taux définitifs doivent être confirmés avant un
+              vrai transfert.
+            </p>
           </div>
         </section>
       </main>
     );
-    }
+  }
+
+  // Bénéficiaire
   if (screen === 'beneficiary') {
+    const validBeneficiary =
+      beneficiaryName.trim().length >= 2 &&
+      beneficiaryPhone.replace(/\D/g, '').length >= 8;
+
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl">
+        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
           <div className="px-6 pt-7 pb-5 flex items-center gap-3">
             <button
               onClick={() => setScreen('transfer')}
+              aria-label="Retour"
               className="h-11 w-11 rounded-full border border-slate-200 flex items-center justify-center text-[#082f49]"
             >
               <ArrowLeft size={21} />
             </button>
             <div>
-              <div className="text-2xl font-extrabold text-[#082f49]">
+              <div className="text-2xl font-extrabold tracking-tight text-[#082f49]">
                 Bénéficiaire
               </div>
               <div className="text-xs text-slate-400 mt-1">
-                Qui recevra l'argent ?
+                Qui doit recevoir l'argent ?
               </div>
             </div>
           </div>
 
           <div className="px-6 pb-8">
-            <div className="rounded-2xl bg-[#eaf8fa] p-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="h-11 w-11 rounded-full bg-white flex items-center justify-center text-[#0b7598]">
-                  <UserRound size={22} />
-                </div>
-                <div>
-                  <div className="font-bold text-[#082f49]">
-                    Informations du bénéficiaire
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    Ces informations servent à effectuer le transfert.
-                  </div>
-                </div>
-              </div>
+            <div className="rounded-2xl bg-[#eaf8fa] p-4 text-sm text-[#0b5575] mb-6">
+              Entrez les coordonnées de la personne qui recevra{' '}
+              <strong>{formatMoney(received)} FCFA</strong>.
             </div>
 
             <label className="block text-sm font-semibold text-[#082f49]">
-              Nom complet
+              Nom complet du bénéficiaire
             </label>
             <div className="mt-2 flex items-center rounded-2xl border border-slate-200 px-4 py-3.5">
               <UserRound size={19} className="text-slate-400" />
@@ -347,12 +359,12 @@ export default function Home() {
                 value={beneficiaryName}
                 onChange={(e) => setBeneficiaryName(e.target.value)}
                 className="ml-3 w-full outline-none text-[#082f49]"
-                placeholder="Nom du bénéficiaire"
+                placeholder="Nom et prénom"
               />
             </div>
 
             <label className="block text-sm font-semibold text-[#082f49] mt-5">
-              Numéro de téléphone
+              Téléphone du bénéficiaire
             </label>
             <div className="mt-2 flex items-center rounded-2xl border border-slate-200 px-4 py-3.5">
               <Phone size={19} className="text-slate-400" />
@@ -366,72 +378,35 @@ export default function Home() {
               />
             </div>
 
-            <div className="mt-5">
-              <div className="text-sm font-semibold text-[#082f49]">
-                Mode de réception
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 mt-2">
+            <label className="block text-sm font-semibold text-[#082f49] mt-5">
+              Mode de réception
+            </label>
+            <div className="mt-2 grid grid-cols-2 gap-3">
+              {['Mobile Money', 'Compte bancaire'].map((method) => (
                 <button
-                  onClick={() => setDeliveryMethod('Mobile Money')}
-                  className={`rounded-2xl border p-4 text-left ${
-                    deliveryMethod === 'Mobile Money'
-                      ? 'border-[#0b7598] bg-[#eaf8fa]'
-                      : 'border-slate-200'
+                  key={method}
+                  onClick={() => setDeliveryMethod(method)}
+                  className={`rounded-2xl border px-3 py-4 text-sm font-semibold ${
+                    deliveryMethod === method
+                      ? 'border-[#0b7598] bg-[#eaf8fa] text-[#0b7598]'
+                      : 'border-slate-200 text-slate-500'
                   }`}
                 >
-                  <Wallet
-                    size={22}
-                    className={
-                      deliveryMethod === 'Mobile Money'
-                        ? 'text-[#0b7598]'
-                        : 'text-slate-400'
-                    }
-                  />
-                  <div className="mt-2 font-bold text-[#082f49]">
-                    Mobile Money
-                  </div>
-                  <div className="text-xs text-slate-400 mt-1">
-                    Réception sur téléphone
-                  </div>
+                  {method}
                 </button>
-
-                <button
-                  onClick={() => setDeliveryMethod('Compte bancaire')}
-                  className={`rounded-2xl border p-4 text-left ${
-                    deliveryMethod === 'Compte bancaire'
-                      ? 'border-[#0b7598] bg-[#eaf8fa]'
-                      : 'border-slate-200'
-                  }`}
-                >
-                  <Receipt
-                    size={22}
-                    className={
-                      deliveryMethod === 'Compte bancaire'
-                        ? 'text-[#0b7598]'
-                        : 'text-slate-400'
-                    }
-                  />
-                  <div className="mt-2 font-bold text-[#082f49]">
-                    Compte bancaire
-                  </div>
-                  <div className="text-xs text-slate-400 mt-1">
-                    Réception sur compte
-                  </div>
-                </button>
-              </div>
+              ))}
             </div>
 
             <button
-              disabled={!beneficiaryName.trim() || !beneficiaryPhone.trim()}
+              disabled={!validBeneficiary}
               onClick={() => setScreen('summary')}
-              className={`mt-6 w-full rounded-full py-4 text-lg font-bold ${
-                beneficiaryName.trim() && beneficiaryPhone.trim()
-                  ? 'bg-[#0b7598] text-white'
-                  : 'bg-slate-200 text-slate-400'
+              className={`mt-7 w-full rounded-full py-4 text-lg font-bold shadow-lg ${
+                validBeneficiary
+                  ? 'bg-[#0b7598] text-white shadow-cyan-900/15'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
-              Voir le récapitulatif
+              Voir le récapitulatif{' '}
               <ArrowRight className="inline ml-2" size={21} />
             </button>
           </div>
@@ -440,19 +415,21 @@ export default function Home() {
     );
   }
 
+  // Récapitulatif
   if (screen === 'summary') {
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl">
+        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
           <div className="px-6 pt-7 pb-5 flex items-center gap-3">
             <button
               onClick={() => setScreen('beneficiary')}
+              aria-label="Retour"
               className="h-11 w-11 rounded-full border border-slate-200 flex items-center justify-center text-[#082f49]"
             >
               <ArrowLeft size={21} />
             </button>
             <div>
-              <div className="text-2xl font-extrabold text-[#082f49]">
+              <div className="text-2xl font-extrabold tracking-tight text-[#082f49]">
                 Récapitulatif
               </div>
               <div className="text-xs text-slate-400 mt-1">
@@ -462,124 +439,119 @@ export default function Home() {
           </div>
 
           <div className="px-6 pb-8">
-            <div className="rounded-3xl bg-[#082f49] p-5 text-white">
-              <div className="text-sm opacity-70">Montant envoyé</div>
-              <div className="text-4xl font-extrabold mt-1">
+            <div className="rounded-[26px] bg-gradient-to-br from-[#073b5c] via-[#0f9fb5] to-[#63c9ca] p-5 text-white">
+              <div className="text-sm text-white/75">Montant envoyé</div>
+              <div className="mt-1 text-3xl font-extrabold">
                 {formatEuro(amountNumber)} EUR
               </div>
-              <div className="mt-3 text-sm opacity-80">
-                Le bénéficiaire reçoit environ
-              </div>
-              <div className="text-2xl font-bold mt-1">
-                {formatMoney(received)} FCFA
+              <div className="mt-1 text-sm text-white/80">
+                {sendCountry} → {receiveCountry}
               </div>
             </div>
 
-            <div className="mt-5 rounded-2xl border border-slate-200 divide-y divide-slate-100">
-              <div className="p-4 flex justify-between gap-4">
-                <span className="text-slate-500">Pays d'envoi</span>
-                <span className="font-semibold text-[#082f49] text-right">
-                  {sendCountry}
-                </span>
-              </div>
-
-              <div className="p-4 flex justify-between gap-4">
-                <span className="text-slate-500">Pays de réception</span>
-                <span className="font-semibold text-[#082f49] text-right">
-                  {receiveCountry}
-                </span>
-              </div>
-
-              <div className="p-4 flex justify-between gap-4">
-                <span className="text-slate-500">Frais</span>
-                <span className="font-semibold text-[#082f49]">
-                  {formatEuro(fee)} EUR
-                </span>
-              </div>
-
-              <div className="p-4 flex justify-between gap-4">
-                <span className="text-slate-500">Taux de change</span>
-                <span className="font-semibold text-[#082f49]">
-                  1 EUR = {rate} FCFA
-                </span>
-              </div>
-
-              <div className="p-4">
-                <div className="text-slate-500 text-sm">Bénéficiaire</div>
-                <div className="font-bold text-[#082f49] mt-1">
+            <div className="mt-5 rounded-2xl border border-slate-100 p-4 space-y-4">
+              <div>
+                <div className="text-xs text-slate-400">Bénéficiaire</div>
+                <div className="mt-1 font-bold text-[#082f49]">
                   {beneficiaryName}
                 </div>
-                <div className="text-sm text-slate-500 mt-1">
+                <div className="text-sm text-slate-500">
                   +229 {beneficiaryPhone}
                 </div>
               </div>
 
-              <div className="p-4 flex justify-between gap-4">
-                <span className="text-slate-500">Réception</span>
-                <span className="font-semibold text-[#082f49]">
+              <div className="border-t border-slate-100 pt-4">
+                <div className="text-xs text-slate-400">Mode de réception</div>
+                <div className="mt-1 font-semibold text-[#082f49]">
                   {deliveryMethod}
-                </span>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Montant</span>
+                  <span className="font-semibold">{formatEuro(amountNumber)} EUR</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Frais</span>
+                  <span className="font-semibold">{formatEuro(fee)} EUR</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Taux</span>
+                  <span className="font-semibold">1 EUR = {rate} FCFA</span>
+                </div>
+                <div className="border-t border-slate-100 pt-3 flex justify-between">
+                  <span className="font-bold text-[#082f49]">Reçu</span>
+                  <span className="font-extrabold text-[#0b7598]">
+                    {formatMoney(received)} FCFA
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-5 flex gap-3 rounded-2xl bg-[#fff8e8] p-4 text-sm text-[#765d16]">
-              <ShieldCheck size={20} className="shrink-0" />
+            <div className="mt-4 flex gap-3 rounded-2xl bg-slate-50 p-4 text-xs text-slate-500">
+              <ShieldCheck className="shrink-0 text-[#0b7598]" size={20} />
               <span>
-                Vérifiez attentivement les informations avant de confirmer.
+                Vérifiez attentivement le numéro du bénéficiaire avant de
+                confirmer.
               </span>
             </div>
 
             <button
               onClick={() => setScreen('confirmation')}
-              className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white"
+              className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white shadow-lg shadow-cyan-900/15"
             >
-              Confirmer le transfert
+              Confirmer le transfert{' '}
               <ArrowRight className="inline ml-2" size={21} />
             </button>
           </div>
         </section>
       </main>
     );
-                  }
+  }
+
+  // Confirmation
   if (screen === 'confirmation') {
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-        <section className="w-full max-w-md rounded-[34px] bg-white shadow-2xl p-7 text-center">
-          <div className="mx-auto h-20 w-20 rounded-full bg-[#e8f8ef] flex items-center justify-center">
-            <CheckCircle2 size={46} className="text-green-600" />
+        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40 p-7 text-center">
+          <div className="mx-auto h-20 w-20 rounded-full bg-[#eaf8fa] flex items-center justify-center text-[#0b7598]">
+            <CheckCircle2 size={48} />
           </div>
 
-          <h1 className="text-3xl font-extrabold text-[#082f49] mt-6">
+          <h1 className="mt-6 text-3xl font-extrabold text-[#082f49]">
             Transfert confirmé
           </h1>
-
-          <p className="text-slate-500 mt-3">
-            Votre demande de transfert a bien été enregistrée.
+          <p className="mt-2 text-sm text-slate-500">
+            Votre demande de transfert a été enregistrée.
           </p>
 
-          <div className="mt-6 rounded-2xl bg-[#eaf8fa] p-5 text-left">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Montant</span>
-              <span className="font-bold text-[#082f49]">
-                {formatEuro(amountNumber)} EUR
-              </span>
+          <div className="mt-7 rounded-2xl bg-slate-50 p-5 text-left">
+            <div className="text-xs text-slate-400">Bénéficiaire</div>
+            <div className="mt-1 font-bold text-[#082f49]">
+              {beneficiaryName}
+            </div>
+            <div className="text-sm text-slate-500">
+              +229 {beneficiaryPhone}
             </div>
 
-            <div className="flex justify-between mt-3">
-              <span className="text-slate-500">Réception</span>
-              <span className="font-bold text-[#0b7598]">
+            <div className="mt-4 border-t border-slate-200 pt-4 flex justify-between">
+              <span className="text-slate-500">Montant reçu</span>
+              <span className="font-extrabold text-[#0b7598]">
                 {formatMoney(received)} FCFA
               </span>
             </div>
 
-            <div className="flex justify-between mt-3">
+            <div className="mt-2 flex justify-between">
               <span className="text-slate-500">Statut</span>
-              <span className="font-bold text-orange-600">En attente</span>
+              <span className="font-semibold text-[#0b7598]">En attente</span>
             </div>
           </div>
 
-          <div className="mt-5 rounded-2xl bg-[#fff8e8] p-4 text-sm text-[#765d16]">
-            Mode démonstration : aucun argent réel n'est envoyé.
+          <div className="mt-5 rounded-2xl bg-[#fff8e8] p-4 text-xs text-[#775b20] text-left">
+            <strong>Mode démo :</strong> aucun argent réel n’est envoyé. La
+            connexion à un prestataire de paiement et la vérification du
+            bénéficiaire devront être ajoutées avant la mise en production.
           </div>
 
           <button
@@ -589,118 +561,98 @@ export default function Home() {
             }}
             className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white"
           >
-            Retour au tableau de bord
+            Retour à mon espace
           </button>
         </section>
       </main>
     );
   }
 
+  // Tableau de bord
   if (screen === 'dashboard') {
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-        <section className="w-full max-w-md rounded-[34px] bg-white shadow-2xl overflow-hidden">
-          <div className="bg-[#082f49] text-white px-6 pt-7 pb-8 rounded-b-[30px]">
+        <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
+          <div className="px-6 pt-7 flex items-center justify-between">
+            <div>
+              <div className="text-sm text-slate-400">Bonjour 👋</div>
+              <div className="text-2xl font-extrabold text-[#082f49]">
+                Votre espace Sendora
+              </div>
+            </div>
+            <button className="h-11 w-11 rounded-full bg-slate-100 flex items-center justify-center text-[#0b7598]">
+              <Bell size={20} />
+            </button>
+          </div>
+
+          <div className="mx-6 mt-6 rounded-[28px] bg-gradient-to-br from-[#073b5c] via-[#0f9fb5] to-[#63c9ca] p-5 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm opacity-70">Bonjour</div>
-                <div className="text-2xl font-extrabold mt-1">
-                  {fullName || 'Bienvenue'}
-                </div>
+                <div className="text-sm text-white/70">Solde disponible</div>
+                <div className="mt-2 text-3xl font-extrabold">0,00 €</div>
               </div>
-
-              <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center">
-                <UserCircle size={27} />
-              </div>
+              <Wallet size={28} />
             </div>
-
-            <div className="mt-7">
-              <div className="text-sm opacity-70">Solde disponible</div>
-              <div className="text-4xl font-extrabold mt-1">0,00 EUR</div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mt-6">
-              <button className="rounded-2xl bg-white/10 p-4 text-left">
-                <Plus size={21} />
-                <div className="font-semibold mt-2">Ajouter</div>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button className="rounded-2xl bg-white/15 py-3 text-sm font-semibold">
+                <Plus className="inline mr-1" size={17} /> Ajouter
               </button>
-
-              <button className="rounded-2xl bg-white/10 p-4 text-left">
-                <Download size={21} />
-                <div className="font-semibold mt-2">Recevoir</div>
+              <button className="rounded-2xl bg-white text-[#07506d] py-3 text-sm font-semibold">
+                <Download className="inline mr-1" size={17} /> Recevoir
               </button>
             </div>
           </div>
 
-          <div className="px-6 py-6">
+          <div className="px-6 mt-6">
             <button
               onClick={() => setScreen('transfer')}
-              className="w-full rounded-3xl bg-[#0b7598] text-white p-5 text-left"
+              className="w-full rounded-[24px] bg-[#0b7598] py-4 text-lg font-bold text-white shadow-lg shadow-cyan-900/15"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm opacity-80">
-                    Transfert international
-                  </div>
-                  <div className="text-xl font-extrabold mt-1">
-                    Envoyer de l'argent
-                  </div>
-                  <div className="text-sm opacity-80 mt-1">
-                    Envoyez de l'argent partout dans le monde
-                  </div>
-                </div>
-
-                <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center">
-                  <Send size={22} />
-                </div>
-              </div>
+              <Send className="inline mr-2" size={21} /> Envoyer de l'argent
             </button>
+          </div>
 
-            <div className="flex items-center justify-between mt-7">
-              <h2 className="text-lg font-extrabold text-[#082f49]">
-                Transferts récents
+          <div className="px-6 mt-7">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-[#082f49]">
+                Derniers transferts
               </h2>
-              <Receipt size={20} className="text-slate-400" />
+              <button className="text-sm font-semibold text-[#0b7598]">
+                Voir tout
+              </button>
             </div>
-
-            <div className="mt-3 rounded-2xl border border-dashed border-slate-200 p-6 text-center">
-              <Globe2 className="mx-auto text-slate-300" size={30} />
-              <div className="font-semibold text-slate-500 mt-3">
-                Aucun transfert récent
+            <div className="mt-4 rounded-2xl border border-slate-100 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-11 w-11 rounded-full bg-slate-100 flex items-center justify-center text-[#0b7598]">
+                  <Receipt size={20} />
+                </div>
+                <div>
+                  <div className="font-semibold text-[#082f49]">
+                    Aucun transfert
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    Vos opérations apparaîtront ici
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-slate-400 mt-1">
-                Vos futurs transferts apparaîtront ici.
-              </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-3 gap-3 mt-6">
-              <button className="rounded-2xl bg-slate-50 p-3 text-center">
-                <Wallet className="mx-auto text-[#0b7598]" size={21} />
-                <div className="text-xs font-semibold text-slate-600 mt-2">
-                  Portefeuille
-                </div>
-              </button>
-
-              <button className="rounded-2xl bg-slate-50 p-3 text-center">
-                <Bell className="mx-auto text-[#0b7598]" size={21} />
-                <div className="text-xs font-semibold text-slate-600 mt-2">
-                  Alertes
-                </div>
-              </button>
-
-              <button className="rounded-2xl bg-slate-50 p-3 text-center">
-                <Settings className="mx-auto text-[#0b7598]" size={21} />
-                <div className="text-xs font-semibold text-slate-600 mt-2">
-                  Réglages
-                </div>
-              </button>
-            </div>
-
+          <div className="mt-8 border-t border-slate-100 px-5 py-4 grid grid-cols-3 text-center">
             <button
-              onClick={() => setScreen('home')}
-              className="w-full mt-6 text-sm font-semibold text-slate-400"
+              onClick={() => setScreen('transfer')}
+              className="text-[#0b7598]"
             >
-              Se déconnecter
+              <Send className="mx-auto" size={20} />
+              <div className="mt-1 text-xs font-semibold">Transférer</div>
+            </button>
+            <button className="text-slate-400">
+              <UserCircle className="mx-auto" size={20} />
+              <div className="mt-1 text-xs font-semibold">Profil</div>
+            </button>
+            <button className="text-slate-400">
+              <Settings className="mx-auto" size={20} />
+              <div className="mt-1 text-xs font-semibold">Paramètres</div>
             </button>
           </div>
         </section>
@@ -708,36 +660,107 @@ export default function Home() {
     );
   }
 
+  // Accueil
   return (
     <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
-      <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl">
-        <div className="px-6 pt-7 flex items-center justify-between">
+      <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
+        <div className="px-6 pt-7 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-[#0b7598] flex items-center justify-center text-white">
-              <Globe2 size={25} />
+            <div className="h-12 w-12 rounded-2xl bg-[#0f9fb5] text-white flex items-center justify-center shadow-lg">
+              <Globe2 size={27} strokeWidth={2.2} />
             </div>
-
             <div>
-              <div className="text-2xl font-black text-[#082f49]">
+              <div className="text-[28px] leading-none font-extrabold tracking-tight text-[#082f49]">
                 Sendora
               </div>
-              <div className="text-[9px] tracking-[0.2em] text-slate-400 font-bold">
-                PLUS PROCHE DU MONDE
+              <div className="mt-1 text-[9px] tracking-[0.34em] text-slate-500">
+                PLUS PROCHE DE CE QUI COMPTE
               </div>
             </div>
           </div>
+          <button className="rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-[#082f49]">
+            🇫🇷 FR⌄
+          </button>
+        </div>
 
-          <div className="rounded-full bg-slate-50 px-3 py-2 text-xs font-bold text-slate-500">
-            FR
+        <div className="px-7 pt-5 text-center">
+          <h1 className="text-[36px] leading-[1.05] font-extrabold tracking-tight text-[#082f49]">
+            Envoyez de l’argent
+            <br />
+            partout dans le monde
+          </h1>
+          <p className="mt-4 text-[17px] leading-6 text-slate-500">
+            Soutenez vos proches, payez vos services et réalisez vos projets,
+            où qu’ils soient.
+          </p>
+        </div>
+
+        <div className="mx-6 mt-7 rounded-[28px] bg-gradient-to-br from-[#073b5c] via-[#0f9fb5] to-[#7ed7d8] p-5 text-white relative overflow-hidden">
+          <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full border-[20px] border-white/10" />
+          <div className="absolute -left-16 -bottom-20 h-48 w-48 rounded-full border-[22px] border-white/10" />
+          <div className="relative flex items-center justify-between">
+            <div>
+              <div className="text-sm text-white/75">
+                Transfert international
+              </div>
+              <div className="mt-2 text-3xl font-bold">100 €</div>
+              <div className="mt-1 text-sm text-white/80">≈ 65 500 FCFA</div>
+            </div>
+            <div className="h-16 w-16 rounded-full bg-white/15 flex items-center justify-center">
+              <ArrowRight size={30} />
+            </div>
+          </div>
+          <div className="relative mt-5 rounded-2xl bg-white/10 p-3 text-sm">
+            Paris 🇫🇷 <span className="mx-2">→</span> Cotonou 🇧🇯
           </div>
         </div>
 
-        <div className="px-6 pt-12 pb-8">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#eaf8fa] px-3 py-2 text-xs font-bold text-[#0b7598]">
-            <Zap size={14} />
-            TRANSFERT INTERNATIONAL
+        <div className="px-6 pt-7 pb-8">
+          <button
+            onClick={() => setScreen('signup')}
+            className="w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white shadow-lg shadow-cyan-900/15"
+          >
+            Créer un compte <ArrowRight className="inline ml-2" size={21} />
+          </button>
+          <button
+            onClick={() => setScreen('dashboard')}
+            className="mt-3 w-full rounded-full border-2 border-[#cfe1e8] bg-white py-4 text-lg font-bold text-[#0b5575]"
+          >
+            Se connecter
+          </button>
+
+          <div className="mt-8 grid grid-cols-3 gap-3 text-center">
+            <div>
+              <div className="mx-auto h-11 w-11 rounded-full bg-slate-100 flex items-center justify-center text-[#0b7598]">
+                <Zap size={20} />
+              </div>
+              <div className="mt-2 text-xs font-semibold text-slate-500">
+                Rapide
+              </div>
+            </div>
+            <div>
+              <div className="mx-auto h-11 w-11 rounded-full bg-slate-100 flex items-center justify-center text-[#0b7598]">
+                <Globe2 size={20} />
+              </div>
+              <div className="mt-2 text-xs font-semibold text-slate-500">
+                International
+              </div>
+            </div>
+            <div>
+              <div className="mx-auto h-11 w-11 rounded-full bg-slate-100 flex items-center justify-center text-[#0b7598]">
+                <LockKeyhole size={20} />
+              </div>
+              <div className="mt-2 text-xs font-semibold text-slate-500">
+                Sécurisé
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-[39px] leading-[1.05] font-black text-[#082f49] mt-5">
-            Envoyez de l'argent
-            <br />
+          <p className="mt-7 text-center text-xs text-slate-400">
+            Transferts rapides, simples et sécurisés
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+}
