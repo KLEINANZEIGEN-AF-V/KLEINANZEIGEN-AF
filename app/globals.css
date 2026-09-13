@@ -1,1 +1,17 @@
-*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.container{width:min(1120px,92%);margin:auto}.nav{border-bottom:1px solid #ddd;background:#fff;position:sticky;top:0;z-index:10}.navin{height:70px;display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{font-weight:900;letter-spacing:.08em}.links{display:flex;gap:18px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #111;background:#111;color:#fff;border-radius:7px;cursor:pointer}.btn.alt{background:#fff;color:#111}.hero{padding:80px 0 65px;border-bottom:1px solid #ddd}.hero h1{font-size:clamp(38px,7vw,76px);line-height:.95;margin:0 0 20px;max-width:850px}.hero p{font-size:20px;max-width:650px;line-height:1.6;color:#555}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.section{padding:55px 0}.card{border:1px solid #ddd;border-radius:10px;padding:22px;background:#fff}.muted{color:#666}.search{width:100%;padding:14px;border:1px solid #bbb;border-radius:7px}.empty{padding:55px 20px;text-align:center;border:1px dashed #bbb;border-radius:10px}.footer{border-top:1px solid #ddd;padding:28px 0;color:#666;margin-top:50px}.dashboard{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 70px)}.side{border-right:1px solid #ddd;padding:24px}.side a{display:block;padding:11px 0}.main{padding:32px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.stat{border:1px solid #ddd;border-radius:9px;padding:20px}.form{max-width:520px;display:grid;gap:14px}.form input,.form textarea,.form select{padding:13px;border:1px solid #bbb;border-radius:7px}.chat{border:1px solid #ddd;border-radius:10px;padding:20px}.bubble{padding:12px 15px;border-radius:10px;background:#f1f1f1;margin:10px 0;max-width:75%}.bubble.me{margin-left:auto;background:#111;color:#fff}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:13px;border-bottom:1px solid #ddd;text-align:left}@media(max-width:800px){.links{display:none}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.dashboard{grid-template-columns:1fr}.side{border-right:0;border-bottom:1px solid #ddd}.main{padding:22px}.hero{padding:55px 0}.hero h1{font-size:44px}}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5fbff;
+}
