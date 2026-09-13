@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Script from 'next/script';
 import {
   ArrowLeft,
   ArrowRight,
@@ -21,6 +22,26 @@ import {
   CheckCircle2,
   ShieldCheck,
 } from 'lucide-react';
+
+declare global {
+  interface Window {
+    openKkiapayWidget?: (options: {
+      amount: number;
+      key: string;
+      position?: 'left' | 'right' | 'center';
+      sandbox?: boolean;
+      data?: string;
+      phone?: string;
+      name?: string;
+      email?: string;
+      theme?: string;
+      paymentmethod?: 'momo' | 'card' | 'wallet' | Array<'momo' | 'card' | 'wallet'>;
+      countries?: string[];
+    }) => void;
+    addSuccessListener?: (callback: (response: { transactionId?: string }) => void) => void;
+    addFailedListener?: (callback: (error?: unknown) => void) => void;
+  }
+}
 
 type Screen =
   | 'home'
@@ -60,6 +81,8 @@ export default function Home() {
   const [beneficiaryName, setBeneficiaryName] = useState('');
   const [beneficiaryPhone, setBeneficiaryPhone] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState('Mobile Money');
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'failed'>('idle');
+  const [transactionId, setTransactionId] = useState('');
 
   const amountNumber = Number(amount.replace(',', '.')) || 0;
 
@@ -80,6 +103,49 @@ export default function Home() {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
+
+  const kkiapayKey = process.env.NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY || '';
+  const paymentAmountXof = Math.round((amountNumber + fee) * rate);
+
+  const startKkiapayPayment = () => {
+    if (!kkiapayKey) {
+      alert('La clé publique KKiaPay n’est pas configurée dans Vercel.');
+      return;
+    }
+
+    if (!paymentAmountXof || paymentAmountXof < 1) {
+      alert('Veuillez saisir un montant valide avant de payer.');
+      return;
+    }
+
+    if (!window.openKkiapayWidget) {
+      alert('KKiaPay est encore en cours de chargement. Réessayez dans quelques secondes.');
+      return;
+    }
+
+    setPaymentStatus('processing');
+
+    window.openKkiapayWidget({
+      amount: paymentAmountXof,
+      key: kkiapayKey,
+      position: 'center',
+      sandbox: true,
+      name: fullName || beneficiaryName,
+      email: email || undefined,
+      phone: phone ? `229${phone.replace(/\D/g, '').slice(-8)}` : undefined,
+      paymentmethod: ['momo', 'card'],
+      countries: ['BJ', 'CI', 'TG', 'SN', 'NE'],
+      theme: '#0b7598',
+      data: JSON.stringify({
+        beneficiaryName,
+        beneficiaryPhone,
+        sendCountry,
+        receiveCountry,
+        amountEUR: amountNumber,
+        feeEUR: fee,
+      }),
+    });
+  };
 
   const resetTransfer = () => {
     setAmount('');
@@ -497,13 +563,43 @@ export default function Home() {
               </span>
             </div>
 
+            <Script
+              src="https://cdn.kkiapay.me/k.js"
+              strategy="afterInteractive"
+              onLoad={() => {
+                if (window.addSuccessListener) {
+                  window.addSuccessListener((response) => {
+                    setPaymentStatus('success');
+                    setTransactionId(response?.transactionId || '');
+                    setScreen('confirmation');
+                  });
+                }
+                if (window.addFailedListener) {
+                  window.addFailedListener(() => setPaymentStatus('failed'));
+                }
+              }}
+            />
+
             <button
-              onClick={() => setScreen('confirmation')}
-              className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white shadow-lg shadow-cyan-900/15"
+              onClick={startKkiapayPayment}
+              disabled={paymentStatus === 'processing'}
+              className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white shadow-lg shadow-cyan-900/15 disabled:opacity-60"
             >
-              Confirmer le transfert{' '}
-              <ArrowRight className="inline ml-2" size={21} />
+              {paymentStatus === 'processing' ? 'Ouverture du paiement…' : 'Payer et confirmer'}
+              {paymentStatus !== 'processing' && (
+                <ArrowRight className="inline ml-2" size={21} />
+              )}
             </button>
+
+            {paymentStatus === 'failed' && (
+              <div className="mt-3 rounded-2xl bg-red-50 p-3 text-sm text-red-600">
+                Le paiement n’a pas abouti. Vous pouvez réessayer.
+              </div>
+            )}
+
+            <div className="mt-3 text-center text-xs text-slate-400">
+              Paiement test KKiaPay • {formatMoney(paymentAmountXof)} FCFA
+            </div>
           </div>
         </section>
       </main>
@@ -523,8 +619,14 @@ export default function Home() {
             Transfert confirmé
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            Votre demande de transfert a été enregistrée.
+            Votre paiement a été traité par KKiaPay et votre demande est enregistrée.
           </p>
+
+          {transactionId && (
+            <div className="mt-4 rounded-2xl bg-[#eaf8fa] p-3 text-xs text-[#0b7598]">
+              Référence KKiaPay : <span className="font-bold">{transactionId}</span>
+            </div>
+          )}
 
           <div className="mt-7 rounded-2xl bg-slate-50 p-5 text-left">
             <div className="text-xs text-slate-400">Bénéficiaire</div>
