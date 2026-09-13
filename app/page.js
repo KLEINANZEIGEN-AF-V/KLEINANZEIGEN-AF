@@ -541,3 +541,203 @@ export default function Home() {
       </main>
     );
                   }
+  if (screen === 'confirmation') {
+    return (
+      <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
+        <section className="w-full max-w-md rounded-[34px] bg-white shadow-2xl p-7 text-center">
+          <div className="mx-auto h-20 w-20 rounded-full bg-[#e8f8ef] flex items-center justify-center">
+            <CheckCircle2 size={46} className="text-green-600" />
+          </div>
+
+          <h1 className="text-3xl font-extrabold text-[#082f49] mt-6">
+            Transfert confirmé
+          </h1>
+
+          <p className="text-slate-500 mt-3">
+            Votre demande de transfert a bien été enregistrée.
+          </p>
+
+          <div className="mt-6 rounded-2xl bg-[#eaf8fa] p-5 text-left">
+            <div className="flex justify-between">
+              <span className="text-slate-500">Montant</span>
+              <span className="font-bold text-[#082f49]">
+                {formatEuro(amountNumber)} EUR
+              </span>
+            </div>
+
+            <div className="flex justify-between mt-3">
+              <span className="text-slate-500">Réception</span>
+              <span className="font-bold text-[#0b7598]">
+                {formatMoney(received)} FCFA
+              </span>
+            </div>
+
+            <div className="flex justify-between mt-3">
+              <span className="text-slate-500">Statut</span>
+              <span className="font-bold text-orange-600">En attente</span>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-2xl bg-[#fff8e8] p-4 text-sm text-[#765d16]">
+            Mode démonstration : aucun argent réel n'est envoyé.
+          </div>
+
+          <button
+            onClick={() => {
+              resetTransfer();
+              setScreen('dashboard');
+            }}
+            className="mt-6 w-full rounded-full bg-[#0b7598] py-4 text-lg font-bold text-white"
+          >
+            Retour au tableau de bord
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === 'dashboard') {
+    return (
+      <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
+        <section className="w-full max-w-md rounded-[34px] bg-white shadow-2xl overflow-hidden">
+          <div className="bg-[#082f49] text-white px-6 pt-7 pb-8 rounded-b-[30px]">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm opacity-70">Bonjour</div>
+                <div className="text-2xl font-extrabold mt-1">
+                  {fullName || 'Bienvenue'}
+                </div>
+              </div>
+
+              <div className="h-12 w-12 rounded-full bg-white/10 flex items-center justify-center">
+                <UserCircle size={27} />
+              </div>
+            </div>
+
+            <div className="mt-7">
+              <div className="text-sm opacity-70">Solde disponible</div>
+              <div className="text-4xl font-extrabold mt-1">0,00 EUR</div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mt-6">
+              <button className="rounded-2xl bg-white/10 p-4 text-left">
+                <Plus size={21} />
+                <div className="font-semibold mt-2">Ajouter</div>
+              </button>
+
+              <button className="rounded-2xl bg-white/10 p-4 text-left">
+                <Download size={21} />
+                <div className="font-semibold mt-2">Recevoir</div>
+              </button>
+            </div>
+          </div>
+
+          <div className="px-6 py-6">
+            <button
+              onClick={() => setScreen('transfer')}
+              className="w-full rounded-3xl bg-[#0b7598] text-white p-5 text-left"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm opacity-80">
+                    Transfert international
+                  </div>
+                  <div className="text-xl font-extrabold mt-1">
+                    Envoyer de l'argent
+                  </div>
+                  <div className="text-sm opacity-80 mt-1">
+                    Envoyez de l'argent partout dans le monde
+                  </div>
+                </div>
+
+                <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center">
+                  <Send size={22} />
+                </div>
+              </div>
+            </button>
+
+            <div className="flex items-center justify-between mt-7">
+              <h2 className="text-lg font-extrabold text-[#082f49]">
+                Transferts récents
+              </h2>
+              <Receipt size={20} className="text-slate-400" />
+            </div>
+
+            <div className="mt-3 rounded-2xl border border-dashed border-slate-200 p-6 text-center">
+              <Globe2 className="mx-auto text-slate-300" size={30} />
+              <div className="font-semibold text-slate-500 mt-3">
+                Aucun transfert récent
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                Vos futurs transferts apparaîtront ici.
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mt-6">
+              <button className="rounded-2xl bg-slate-50 p-3 text-center">
+                <Wallet className="mx-auto text-[#0b7598]" size={21} />
+                <div className="text-xs font-semibold text-slate-600 mt-2">
+                  Portefeuille
+                </div>
+              </button>
+
+              <button className="rounded-2xl bg-slate-50 p-3 text-center">
+                <Bell className="mx-auto text-[#0b7598]" size={21} />
+                <div className="text-xs font-semibold text-slate-600 mt-2">
+                  Alertes
+                </div>
+              </button>
+
+              <button className="rounded-2xl bg-slate-50 p-3 text-center">
+                <Settings className="mx-auto text-[#0b7598]" size={21} />
+                <div className="text-xs font-semibold text-slate-600 mt-2">
+                  Réglages
+                </div>
+              </button>
+            </div>
+
+            <button
+              onClick={() => setScreen('home')}
+              className="w-full mt-6 text-sm font-semibold text-slate-400"
+            >
+              Se déconnecter
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
+      <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl">
+        <div className="px-6 pt-7 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-2xl bg-[#0b7598] flex items-center justify-center text-white">
+              <Globe2 size={25} />
+            </div>
+
+            <div>
+              <div className="text-2xl font-black text-[#082f49]">
+                Sendora
+              </div>
+              <div className="text-[9px] tracking-[0.2em] text-slate-400 font-bold">
+                PLUS PROCHE DU MONDE
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-full bg-slate-50 px-3 py-2 text-xs font-bold text-slate-500">
+            FR
+          </div>
+        </div>
+
+        <div className="px-6 pt-12 pb-8">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#eaf8fa] px-3 py-2 text-xs font-bold text-[#0b7598]">
+            <Zap size={14} />
+            TRANSFERT INTERNATIONAL
+          </div>
+
+          <h1 className="text-[39px] leading-[1.05] font-black text-[#082f49] mt-5">
+            Envoyez de l'argent
+            <br />
