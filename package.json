@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@kkiapay-org/nodejs-sdk": "latest",
-    "@supabase/ssr": "latest"
+    "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "next": "latest",
     "react": "latest",
