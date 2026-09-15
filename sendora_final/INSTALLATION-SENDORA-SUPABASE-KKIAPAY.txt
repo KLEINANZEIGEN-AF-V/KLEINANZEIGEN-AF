@@ -1,0 +1,14 @@
+SENDORA — connexion KKiaPay -> vérification serveur -> Supabase
+
+1. Dans Supabase > SQL Editor, exécuter sendora_transfers.sql.
+2. Dans Vercel > Settings > Environment Variables, ajouter:
+   - SUPABASE_SERVICE_ROLE_KEY
+   - KKIApay_PRIVATE_KEY
+   - KKIApay_SECRET_KEY
+   - KKIAPAY_SANDBOX=true
+   La clé publique NEXT_PUBLIC_KKIAPAY_PUBLIC_KEY existe déjà.
+3. Ne jamais mettre une clé privée, secrète ou service_role dans NEXT_PUBLIC_.
+4. Remplacer app/page.tsx par le page.tsx fourni.
+5. Ajouter app/api/kkiapay/confirm/route.ts.
+6. Commit / push puis redéployer Vercel.
+7. Tester en Sandbox. Après un paiement réussi, Sendora appelle l'API serveur, vérifie la transaction avec KKiaPay, puis insère/actualise sendora_transfers dans Supabase.
