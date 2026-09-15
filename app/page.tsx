@@ -508,13 +508,48 @@ export default function Home() {
     }
   };
 
-  const openTransfer = () => {
+  const openTransfer = async () => {
     if (!senderProfileComplete) {
       alert('Complétez d’abord vos informations personnelles (nom, téléphone et e-mail) pour pouvoir envoyer de l’argent.');
       setScreen('signup');
       return;
     }
-    setScreen('transfer');
+
+    try {
+      const supabase = getSupabase();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) throw new Error('Connexion requise.');
+
+      const response = await fetch('/api/kyc/status', {
+        cache: 'no-store',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Impossible de vérifier votre identité.');
+
+      const status = data.status || 'not_started';
+      setKycStatus(status);
+      setKycReason(data.rejection_reason || '');
+
+      if (status !== 'verified') {
+        setScreen('kyc');
+        if (status === 'pending') {
+          alert('Votre vérification d’identité est encore en attente. Vous pourrez envoyer de l’argent après sa validation.');
+        } else if (status === 'processing') {
+          alert('Votre vérification d’identité est en cours. Vous pourrez envoyer de l’argent après sa validation.');
+        } else if (status === 'rejected') {
+          alert('Votre vérification d’identité a été refusée. Consultez le motif et soumettez une nouvelle demande.');
+        } else {
+          alert('Vérifiez votre identité avant d’envoyer de l’argent.');
+        }
+        return;
+      }
+
+      setScreen('transfer');
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Impossible de vérifier votre identité.');
+    }
   };
 
   const amountNumber = Number(amount.replace(',', '.')) || 0;
@@ -541,6 +576,13 @@ export default function Home() {
   const paymentAmountXof = Math.round(amountNumber * rate);
 
   const startKkiapayPayment = () => {
+    if (kycStatus !== 'verified') {
+      setScreen('kyc');
+      void loadKycStatus();
+      alert('Votre identité doit être vérifiée avant de continuer vers le paiement.');
+      return;
+    }
+
     if (!kkiapayKey) {
       alert('La clé publique KKiaPay n’est pas configurée dans Vercel.');
       return;
