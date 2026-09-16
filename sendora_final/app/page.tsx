@@ -53,6 +53,7 @@ type Screen =
   | 'dashboard'
   | 'transfer'
   | 'beneficiary'
+  | 'reception'
   | 'summary'
   | 'confirmation'
   | 'transfers'
@@ -60,6 +61,7 @@ type Screen =
   | 'profile'
   | 'settings'
   | 'beneficiaries'
+  | 'reception'
   | 'kyc';
 
 const countries = [
@@ -1027,7 +1029,7 @@ export default function Home() {
 
             <button
               disabled={!validBeneficiary}
-              onClick={() => setScreen('summary')}
+              onClick={() => setScreen('reception')}
               className={`mt-7 w-full rounded-full py-4 text-lg font-bold shadow-lg ${
                 validBeneficiary
                   ? 'bg-[#0b7598] text-white shadow-cyan-900/15'
@@ -1043,7 +1045,72 @@ export default function Home() {
     );
   }
 
-  // Récapitulatif
+  // Moyen de réception des fonds
+if (screen === 'reception') {
+  return (
+    <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
+      <section className="w-full max-w-md overflow-hidden rounded-[34px] bg-white shadow-2xl shadow-slate-300/40">
+        <div className="px-6 pt-7 pb-5 flex items-center gap-3">
+          <button
+            onClick={() => setScreen('beneficiary')}
+            aria-label="Retour"
+            className="h-11 w-11 rounded-full border border-slate-200 flex items-center justify-center text-[#082f49]"
+          >
+            <ArrowLeft size={21} />
+          </button>
+          <div>
+            <div className="text-2xl font-extrabold tracking-tight text-[#082f49]">
+              Moyen de réception des fonds
+            </div>
+            <div className="text-xs text-slate-400 mt-1">
+              Choisissez comment le bénéficiaire recevra l’argent
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 pb-8">
+          <button
+            onClick={() => {
+              setDeliveryMethod('Mobile Money');
+              setScreen('summary');
+            }}
+            className={`w-full rounded-2xl border px-5 py-5 text-left ${
+              deliveryMethod === 'Mobile Money'
+                ? 'border-[#0b7598] bg-[#eaf8fa]'
+                : 'border-slate-200 bg-white'
+            }`}
+          >
+            <div className="text-2xl">📱</div>
+            <div className="mt-2 text-lg font-bold text-[#082f49]">Mobile Money</div>
+            <div className="mt-1 text-sm text-slate-500">
+              Recevoir les fonds sur un portefeuille mobile.
+            </div>
+          </button>
+
+          <button
+            onClick={() => {
+              setDeliveryMethod('Compte bancaire');
+              setScreen('summary');
+            }}
+            className={`mt-4 w-full rounded-2xl border px-5 py-5 text-left ${
+              deliveryMethod === 'Compte bancaire'
+                ? 'border-[#0b7598] bg-[#eaf8fa]'
+                : 'border-slate-200 bg-white'
+            }`}
+          >
+            <div className="text-2xl">🏦</div>
+            <div className="mt-2 text-lg font-bold text-[#082f49]">Compte bancaire</div>
+            <div className="mt-1 text-sm text-slate-500">
+              Recevoir les fonds directement sur un compte bancaire.
+            </div>
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+// Récapitulatif
   if (screen === 'summary') {
     return (
       <main className="min-h-screen bg-[#f5fbfd] flex items-center justify-center p-4">
